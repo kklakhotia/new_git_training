@@ -9,12 +9,13 @@ pipeline {
         stage('build') {
             steps {
                 bat 'echo "batch build"'
+                stash allowEmpty: true, includes: '*.txt', name: 'for_test'
                 archiveArtifacts artifacts: '*.txt'
             }
         }
         stage('Test') {
             steps {
-                copyArtifacts filter: '*.txt', fingerprintArtifacts: true, projectName: 'build', selector: lastSuccessful()
+                unstash 'for_test'
                 echo 'Testing'
             }
         }
